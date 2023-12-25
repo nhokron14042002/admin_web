@@ -1,0 +1,187 @@
+﻿@model SV20T1080033.Web.Models.PaginationSearchProduct
+@{
+    Layout = null;
+    int nextPage = Model.Page + 1;
+    int previousPage = Model.Page - 1;
+}
+<p style="margin:10px 0 10px 0">
+    Có <strong>@Model.RowCount</strong> mặt hàng trong tổng số <strong>@Model.PageCount</strong> trang
+</p>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-warning">
+        <p>@ViewBag.ErrorMessage</p>
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.DeletedMessage))
+{
+    <div class="alert alert-success">
+        <p>@ViewBag.DeletedMessage</p>
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.SavedMessage))
+{
+    <div class="alert alert-success">
+        <p>@ViewBag.SavedMessage</p>
+    </div>
+}
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr class="bg-primary">
+                <th style="width:100px">Ảnh</th>
+                <th>Tên mặt hàng</th>
+                <th>Đơn vị tính</th>
+                <th>Giá</th>
+                <th style="width:100px">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Data)
+            {
+                <tr>
+                    @if (item.Photo != "")
+                    {
+                        <td>
+                            <img src="~/images/products/@item.Photo" style="width:80px" />
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <img src="~/images/products/xeday.png" style="width:80px" />
+                        </td>
+                    }
+                    
+                    <td style="vertical-align:middle">@item.ProductName</td>
+                    <td style="vertical-align:middle">@item.Unit</td>
+                    <td style="vertical-align:middle">@string.Format("{0:0,0}",item.Price)</td>
+                    <td class="text-right" style="vertical-align:middle">
+                        <a href="~/Admin/Product/Edit/@item.ProductId" class="btn btn-xs btn-flat btn-info">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <a href="~/Admin/Product/Delete/@item.ProductId" class="btn btn-xs btn-flat btn-danger">
+                            <i class="fa fa-remove"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (Model.RowCount != 0)
+{
+    <div class="box-footer text-center">
+        <ul class="pagination">
+            @if (Model.Page != 1)
+            {
+                int pageNumber = Model.Page - 1;
+                <li class="paginate_button" id="example2_previous">
+                    <a href="javascript:;" onclick="doSearch(1)">First Page</a>
+                </li>
+                <li class="paginate_button" id="example2_previous">
+                    <a href="javascript:;" onclick="doSearch(@pageNumber)">Previous Page</a>
+                </li>
+            }
+            @{
+                int _pageNext = Model.PageCount;
+                int _pagePrev = 1;
+                if (Model.PageCount >= 5)
+                {
+                    _pageNext = Model.Page + 2;
+                    _pagePrev = Model.Page - 2;
+                    if (_pageNext > Model.PageCount)
+                    {
+                        _pagePrev -= _pageNext - Model.PageCount;
+                        _pageNext = Model.PageCount;
+                    }
+                    else if (_pagePrev <= 0)
+                    {
+                        _pageNext -= _pagePrev - 1;
+                        _pagePrev = 1;
+                    }
+                }
+                for (int i = _pagePrev; i <= _pageNext; i++)
+                {
+                    if (Model.Page == i)
+                    {
+                        <li class="paginate_button active">
+                            <a href="javascript:;" onclick="doSearch(@i)">@i</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="paginate_button">
+                            <a href="javascript:;" onclick="doSearch(@i)">@i</a>
+                        </li>
+                    }
+                }
+            }
+            @if (Model.Page != Model.PageCount)
+            {
+                int pageNumber = Model.Page + 1;
+                <li class="paginate_button next" id="example2_next">
+                    <a href="javascript:;" onclick="doSearch(@pageNumber)">Next Page</a>
+                </li>
+                <li class="paginate_button next" id="example2_next">
+                    <a href="javascript:;" onclick="doSearch(@Model.PageCount)">Last Page</a>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@* <div class="box-footer text-center">
+    <ul class="pagination">
+        @if (ViewBag.Page != 1)
+        {
+            int pageNumber = ViewBag.Page - 1;
+            <li class="paginate_button" id="example2_previous">
+                <a href="~/Admin/Product/Index/?page=@pageNumber">Previous</a>
+            </li>
+        }
+        @{
+            int _pageNext = ViewBag.TotalPage;
+            int _pagePrev = 1;
+            if (ViewBag.TotalPage >= 5)
+            {
+                _pageNext = ViewBag.Page + 2;
+                _pagePrev = ViewBag.Page - 2;
+                if (_pageNext > ViewBag.TotalPage)
+                {
+                    _pagePrev -= _pageNext - ViewBag.TotalPage;
+                    _pageNext = ViewBag.TotalPage;
+                }
+                else if (_pagePrev <= 0)
+                {
+                    _pageNext -= _pagePrev - 1;
+                    _pagePrev = 1;
+                }
+            }
+            for (int i = _pagePrev; i <= _pageNext; i++)
+            {
+                if (ViewBag.Page == i)
+                {
+                    <li class="paginate_button active">
+                        <a href="~/Admin/Product/Index/?page=@i">@i</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="paginate_button">
+                        <a href="~/Admin/Product/Index/?page=@i">@i</a>
+                    </li>
+                }
+            }
+        }
+        @if (ViewBag.Page != ViewBag.TotalPage)
+        {
+            int pageNumber = ViewBag.Page + 1;
+            <li class="paginate_button next" id="example2_next">
+                <a href="~/Admin/Product/Index/?page=@pageNumber">Next</a>
+            </li>
+        }
+    </ul>
+</div> *@

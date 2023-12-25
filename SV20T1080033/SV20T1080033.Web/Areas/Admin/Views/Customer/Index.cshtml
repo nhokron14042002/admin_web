@@ -1,0 +1,140 @@
+﻿@* @model SV20T1080033.Web.Models.paginationSearchInput;
+@{
+    ViewBag.Title = " Danh sách khách hàng";
+}
+
+
+<div class="box box-primary">
+    <div class="box-body">
+        <form id="formSearchInput" action="~/Admin/Customer/Search" method="get">
+            @Html.HiddenFor(m => m.pageSize)
+            <div class="input-group">
+                <input type="text" name="searchValue" class="form-control" placeholder="Nhập tên khách hàng cần tim.." spellcheck="false" data-ms-editor="true" value="@Model.searchValue">
+                <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <a href="~/Admin/Customer/Create" class="btn btn-xs btn-primary">
+                        <i class="fa fa-plus"></i> Bổ sung
+                    </a>
+                </span>
+            </div>
+        </form>
+        <div id="searchResult">
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () { 
+            $("#formSearchInput").submit(function (e) {
+
+                e.preventDefault();
+                doSearch(1);
+                return;
+            });
+            //khi trang napj xong thì tìm kiếm theo trâng đang lưu trong model
+            doSearch(@Model.page);
+        
+        });
+
+        function doSearch(page) {
+            var url = $("#formSearchInput").prop("action");
+            
+            var postData = $("#formSearchInput").serializeArray();
+            postData.push({"name":"page","value":page});
+
+            $.ajax({
+
+                url : url,
+                type: "POST",
+                data: postData,
+                error: function () { 
+                    alert("your request is not valid");
+
+
+                
+                },
+                success: function (data) {
+                    $("#searchResult").html(data);
+                }
+            });
+            
+            return;
+        };
+
+    </script>
+
+} *@
+
+@model SV20T1080033.Web.Models.PaginationSearchInput;
+@{
+    ViewBag.Title = " Danh sách khách hàng";
+}
+
+
+<div class="box box-primary">
+    <div class="box-body">
+        <form id="formSearchInput" action="~/Admin/Customer/Search" method="get">
+            @Html.HiddenFor(m => m.PageSize)
+            <div class="input-group">
+                <input type="text" name="searchValue" class="form-control" placeholder="Nhập tên khách hàng cần tim.." spellcheck="false" data-ms-editor="true" value="@Model.SearchValue">
+                <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <a href="~/Admin/Customer/Create" class="btn btn-xs btn-primary">
+                        <i class="fa fa-plus"></i> Bổ sung
+                    </a>
+                </span>
+            </div>
+        </form>
+        <div id="searchResult">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#formSearchInput").submit(function (e) {
+
+                e.preventDefault();
+                doSearch(1);
+                return;
+            });
+            //khi trang napj xong thì tìm kiếm theo trâng đang lưu trong model
+            doSearch(@Model.Page);
+
+        });
+
+        function doSearch(page) {
+            var url = $("#formSearchInput").prop("action");
+
+            var postData = $("#formSearchInput").serializeArray();
+            postData.push({ "name": "page", "value": page });
+
+            $.ajax({
+
+                url: url,
+                type: "POST",
+                data: postData,
+                error: function () {
+                    alert("your request is not valid");
+
+
+
+                },
+                success: function (data) {
+                    $("#searchResult").html(data);
+                }
+            });
+
+            return;
+        };
+
+    </script>
+
+}

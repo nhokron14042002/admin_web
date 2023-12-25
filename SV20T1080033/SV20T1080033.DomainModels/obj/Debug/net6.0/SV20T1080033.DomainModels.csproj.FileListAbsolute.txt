@@ -1,0 +1,11 @@
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\bin\Debug\net6.0\SV20T1080033.DomainModels.deps.json
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\bin\Debug\net6.0\SV20T1080033.DomainModels.dll
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\bin\Debug\net6.0\SV20T1080033.DomainModels.pdb
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\obj\Debug\net6.0\SV20T1080033.DomainModels.GeneratedMSBuildEditorConfig.editorconfig
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\obj\Debug\net6.0\SV20T1080033.DomainModels.AssemblyInfoInputs.cache
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\obj\Debug\net6.0\SV20T1080033.DomainModels.AssemblyInfo.cs
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\obj\Debug\net6.0\SV20T1080033.DomainModels.csproj.CoreCompileInputs.cache
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\obj\Debug\net6.0\SV20T1080033.DomainModels.dll
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\obj\Debug\net6.0\refint\SV20T1080033.DomainModels.dll
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\obj\Debug\net6.0\SV20T1080033.DomainModels.pdb
+G:\.NET\SV20T1080033\SV20T1080033.DomainModels\obj\Debug\net6.0\ref\SV20T1080033.DomainModels.dll

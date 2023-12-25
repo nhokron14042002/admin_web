@@ -1,0 +1,443 @@
+﻿@model SV20T1080033.Web.Models.PaginationSearchEmployee
+@{
+	ViewBag.Title = "Quản lý nhân viên";
+}
+
+<div class="box box-primary">
+	<div class="box-body">
+		<!-- /Form tìm kiếm -->
+		<form action="~/Admin/Employees" method="get">
+			<div class="input-group">
+				<input type="text" name="searchValue" class="form-control" placeholder="Nhập tên khách hàng cần tìm..." spellcheck="false" data-ms-editor="true" value="@Model.SearchValue">
+				<span class="input-group-btn">
+					<button type="submit" name="searchValue" id="search-btn" class="btn btn-flat">
+						<i class="fa fa-search"></i>
+					</button>
+					<a href="~/Admin/Employees/Create" class="btn btn-flat btn-primary">
+						<i class="fa fa-plus"></i> Bổ sung
+					</a>
+				</span>
+			</div>
+		</form>
+
+		<!-- /Danh sách nhân viên -->
+		<p style="margin:10px 0 10px 0">
+			Có <strong>@string.Format("{0:N0}", Model.RowCount)</strong> nhân viên. Hiện ở trang <strong>@string.Format("{0:N0}", Model.Page)</strong> trên tổng số <strong>@string.Format("{0:N0}", Model.PageCount)</strong> trang
+		</p>
+
+		<!-- /Thông báo lỗi -->
+		@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+		{
+			<div class="alert alert-warning">
+				<p>@ViewBag.ErrorMessage</p>
+			</div>
+		}
+
+		@if (Model.RowCount == 0)
+		{
+			<div class="alert alert-warning">
+				<p>Không tìm thấy nhân viên</p>
+			</div>
+		}
+
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover">
+				<tbody>
+
+					<div class="row">
+						@foreach (var item in Model.Data)
+						{
+							<div class="col-md-6">
+								<div class="box box-primary" style="width: auto">
+									<div class="box-header with-border">
+										@item.FullName
+										<div class="pull-right">
+											<a href="~/Admin/Employees/Edit/@item.EmployeeID" class="btn btn-xs btn-info">
+												<i class="fa fa-edit"></i>
+											</a>
+											<a href="~/Admin/Employees/Delete/@item.EmployeeID" class="btn btn-xs btn-danger">
+												<i class="fa fa-remove"></i>
+											</a>
+											<a href="#" class="btn btn-xs btn-warning">
+												<i class="fa fa-key"></i>
+											</a>
+										</div>
+									</div>
+									<div class="row">
+										@if (item.Photo != "")
+										{
+											<div class="col-sm-6 col-md-4">
+												<img src="~/images/employees/@item.Photo" alt="" class="img-rounded img-responsive" width="80" height="160" />
+											</div>
+										}
+										else
+										{
+											<div class="col-sm-6 col-md-4">
+												<img src="~/images/employees/employee.png" alt="" class="img-rounded img-responsive" width="80" height="160"   />
+											</div>
+										}
+										<div class="col-sm-6 col-md-8" style="margin-top:10px; margin-bottom:10px">
+											<p>
+												<i class="fa fa-birthday-cake" style=margin-right:10px></i>@String.Format("{0:d}", item.BirthDate)
+												<br />
+												<i class="fa fa-phone" style=margin-right:10px></i>@item.Phone
+												<br />
+												<i class="fa fa-envelope" style=margin-right:10px></i>@item.Email
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+
+					@* @for (int row = 0; row < 3; row++)
+
+					{
+						
+
+						<tr>
+							
+							@for (int col = 0; col < 3; col++)
+
+							{
+
+								var itemIndex = row * 3 + col;
+								var item = Model.Data[itemIndex];
+
+								// Sử dụng biến item ở đây
+								<td style="display:inline-block; border-top-color: #37acef; margin:40px;padding:20px ; border-top-width:thick ; border-radius:10px">
+									<div>
+										<div style="margin:10px">
+											<p style=margin-bottom:-14px ;font-weight: bold;>@item.FullName</p>
+											<div style=margin-left:350px>
+
+												<small>
+													<a href="~/Admin/Employees/Edit/@item.EmployeeID" class="btn btn-xs btn-info">
+														<i class="fa fa-edit"></i>
+													</a>
+													<a href="~/Admin/Employees/Delete/@item.EmployeeID" class="btn btn-xs btn-danger">
+														<i class="fa fa-remove"></i>
+													</a>
+													<a href="~/Admin/Employees/Password/@item.EmployeeID" class="btn btn-xs btn-warning">
+														<i class="fa fa-key"></i>
+													</a>
+												</small>
+
+											</div>
+										</div>
+
+										<div class="row">
+
+											@if (item.Photo != "")
+											{
+												<div class="col-sm-6 col-md-4">
+
+													<img src="~/Images/employees/@item.Photo" height="180" width="160" alt="chưa load ảnh.." class="img-rounded img-responsive" />
+
+
+												</div>
+											}
+											else
+											{
+												<div class="col-sm-6 col-md-4">
+
+													<img src="~/Images/employees/employee.png" height="180" width="160" alt="chưa load ảnh.." class="img-rounded img-responsive" />
+
+
+												</div>
+											}
+											
+											<div class="col-sm-6 col-md-8">
+												<p>
+													<i class="fa fa-birthday-cake"></i> @string.Format("{0:dd/MM/yyyy}", item.BirthDate)
+													<br />
+													<i style="margin: 12px 0px; " class="fa fa-phone"></i> @item.Phone
+													<br />
+													<i class="fa fa-envelope"></i> @item.Email
+												</p>
+
+											</div>
+										</div>
+
+									</div>
+
+								</td>
+								
+							}
+						</tr>
+					} *@
+				</tbody>
+			</table>
+		</div>
+		@* <div class="row">
+			@foreach (var item in Model.Data)
+			{
+				<div class="col-md-6">
+					<div class="box box-primary" style="width: auto">
+						<div class="box-header with-border">
+							@item.FullName
+							<div class="pull-right">
+								<a href="~/Admin/Employees/Edit/@item.EmployeeID" class="btn btn-xs btn-info">
+									<i class="fa fa-edit"></i>
+								</a>
+								<a href="~/Admin/Employees/Delete/@item.EmployeeID" class="btn btn-xs btn-danger">
+									<i class="fa fa-remove"></i>
+								</a>
+								<a href="#" class="btn btn-xs btn-warning">
+									<i class="fa fa-key"></i>
+								</a>
+							</div>
+						</div>
+						<div class="row">
+							@if (item.Photo != "")
+							{
+								<div class="col-sm-6 col-md-4">
+									<img src="~/images/Employees/@item.Photo" alt="" class="img-rounded img-responsive" style="width: 80px" />
+								</div>
+							}
+							else
+							{
+								<div class="col-sm-6 col-md-4">
+									<img src="~/images/Employees/@item.Photo" alt="" class="img-rounded img-responsive" style="width: 80px" />
+								</div>
+							}
+							<div class="col-sm-6 col-md-8" style="margin-top:10px; margin-bottom:10px">
+								<p>
+									<i class="fa fa-birthday-cake" style=margin-right:10px></i>@String.Format("{0:d}", item.BirthDate)
+									<br />
+									<i class="fa fa-phone" style=margin-right:10px></i>@item.Phone
+									<br />
+									<i class="fa fa-envelope" style=margin-right:10px></i>@item.Email
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		</div> *@
+
+	</div>
+
+	@if (Model.RowCount != 0)
+	{
+		<div class="box-footer text-center">
+			<ul class="pagination">
+				@if (Model.Page != 1)
+				{
+					int pageNumber = Model.Page - 1;
+					<li class="paginate_button" id="example2_previous">
+						<a href="~/Admin/Employees/Index/?page=1">First Page</a>
+					</li>
+					<li class="paginate_button" id="example2_previous">
+						<a href="~/Admin/Employees/Index/?page=@pageNumber">Previous Page</a>
+					</li>
+				}
+				@{
+					int _pageNext = Model.PageCount;
+					int _pagePrev = 1;
+					if (Model.PageCount >= 5)
+					{
+						_pageNext = Model.Page + 3;
+						_pagePrev = Model.Page - 2;
+						if (_pageNext > Model.PageCount)
+						{
+							_pagePrev -= _pageNext - Model.PageCount;
+							_pageNext = Model.PageCount;
+						}
+						else if (_pagePrev <= 0)
+						{
+							_pageNext -= _pagePrev - 1;
+							_pagePrev = 1;
+						}
+					}
+					for (int i = _pagePrev; i <= _pageNext; i++)
+					{
+						if (Model.Page == i)
+						{
+							<li class="paginate_button active">
+								<a href="~/Admin/Employees/Index/?page=@i">@i</a>
+							</li>
+						}
+						else
+						{
+							<li class="paginate_button">
+								<a href="~/Admin/Employees/Index/?page=@i">@i</a>
+							</li>
+						}
+					}
+				}
+				@if (Model.Page != Model.PageCount)
+				{
+					int pageNumber = Model.Page + 1;
+					<li class="paginate_button next" id="example2_next">
+						<a href="~/Admin/Employees/Index/?page=@pageNumber">Next Page</a>
+					</li>
+					<li class="paginate_button next" id="example2_next">
+						<a href="~/Admin/Employees/Index/?page=@Model.PageCount">Last Page</a>
+					</li>
+				}
+			</ul>
+		</div>
+	}
+</div>
+
+
+@* @model SV20T1080033.Web.Models.PaginationSearchEmployee;
+
+
+<div class="box box-primary">
+	<div class="box-body">
+		<!-- /Form tìm kiếm -->
+		<form action="~/Admin/Employees" method="get">
+			<div class="input-group">
+				<input type="text" name="searchValue" class="form-control" placeholder="Nhập tên khách hàng cần tim.." spellcheck="false" data-ms-editor="true" value="@Model.SearchValue">
+				<span class="input-group-btn">
+					<button type="submit" name="searchValue" id="search-btn" class="btn btn-flat">
+						<i class="fa fa-search"></i>
+					</button>
+					<a href="~/Admin/Employees/Create" class="btn btn-flat btn-primary">
+						<i class="fa fa-plus"></i> Bổ sung
+					</a>
+				</span>
+			</div>
+		</form>
+
+		<!-- /Danh sách nhân viên -->
+		
+		<p style="margin:10px 0 10px 0">
+			Có <strong> @Model.RowCount </strong>Nhân viên, Hiện đang ở trang <strong>@Model.Page</strong> trên tổng số <strong>@Model.PageCount</strong>
+		</p>
+
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover">
+				<tbody>
+					
+
+					@for (int row = 0; row < 3; row++)
+						
+					{
+						
+						<tr>
+							
+							@for (int col = 0; col < 3; col++)
+							
+							{   
+								
+								var itemIndex =  row * 3 + col;
+								var item = Model.Data[itemIndex];
+								
+								// Sử dụng biến item ở đây
+								<td style="display:inline-block; border-top-color: #37acef; margin:40px;padding:20px ; border-top-width:thick ; border-radius:10px" >
+									<div  >
+										<div style="margin:10px">
+											<p style=margin-bottom:-14px ;font-weight: bold;>@item.FullName</p>
+											<div style=margin-left:350px>
+
+												<small>
+													<a href="~/Admin/Employees/Edit/@item.EmployeeID" class="btn btn-xs btn-info">
+														<i class="fa fa-edit"></i>
+													</a>
+													<a href="~/Admin/Employees/Delete/@item.EmployeeID" class="btn btn-xs btn-danger">
+														<i class="fa fa-remove"></i>
+													</a>
+													<a href="~/Admin/Employees/Password?id=123" class="btn btn-xs btn-warning">
+														<i class="fa fa-key"></i>
+													</a>
+												</small>
+
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-sm-6 col-md-4">
+
+												<img src="~/Images/employees/@item.Photo" width="150" alt="chưa load ảnh.." class="img-rounded img-responsive" /> 
+										
+												
+											</div>
+											<div class="col-sm-6 col-md-8">
+												<p>
+													<i  class="fa fa-birthday-cake"></i> @string.Format("{0:dd/MM/yyyy}", item.BirthDate)
+													<br />
+													<i style="margin: 12px 0px; " class="fa fa-phone" ></i> @item.Phone
+													<br />
+													<i  class="fa fa-envelope"></i> @item.Email
+												</p>
+
+											</div>
+										</div>
+
+								</div>
+									
+								</td>
+							}
+						</tr>
+					}
+				</tbody>
+			</table>
+
+			<!-- /Số trang -->
+			<div class="box-footer text-center">
+				<ul class="pagination">
+					@if (Model.Page != 1)
+					{
+						int pageNumber = Model.Page - 1;
+						<li class="paginate_button">
+							<a href="~/admin/Employees/Index/?page=1&searchValue=@Model.SearchValue">First Page</a>
+						</li>
+						<li class="paginate_button" id="example2_previous">
+							<a href="~/admin/Employees/Index/?page=@pageNumber&searchValue=@Model.SearchValue">Previous</a>
+						</li>
+					}
+					@{
+						int _pageNext = Model.PageCount;
+						int _pagePrev = 1;
+						if (Model.PageCount >= 5)
+						{
+							_pageNext = Model.Page + 2;
+							_pagePrev = Model.Page - 2;
+							if (_pageNext > Model.PageCount)
+							{
+								_pagePrev -= _pageNext - Model.PageCount;
+								_pageNext = Model.PageCount;
+							}
+							else if (_pagePrev <= 0)
+							{
+								_pageNext -= _pagePrev - 1;
+								_pagePrev = 1;
+							}
+						}
+						for (int i = _pagePrev; i <= _pageNext; i++)
+						{
+							if (Model.Page == i)
+							{
+								<li class="paginate_button active">
+									<a href="#">@i</a>
+								</li>
+							}
+							else
+							{
+								<li class="paginate_button">
+									<a href="~/admin/Employees/Index/?page=@i&searchValue=@Model.SearchValue">@i</a>
+								</li>
+							}
+						}
+					}
+					@if (Model.Page != Model.PageCount && Model.PageCount != 1)
+					{
+						int pageNumber = Model.Page + 1;
+						<li class="paginate_button next" id="example2_next">
+							<a href="~/admin/Employees/Index/?page=@pageNumber&searchValue=@Model.SearchValue">Next</a>
+						</li>
+						<li class="paginate_button next">
+							<a href="~/admin/Employees/Index/?page=@Model.PageCount&searchValue=@Model.SearchValue">Last Page</a>
+						</li>
+					}
+				</ul>
+			</div>
+
+		</div>
+	</div>
+</div>
+ *@

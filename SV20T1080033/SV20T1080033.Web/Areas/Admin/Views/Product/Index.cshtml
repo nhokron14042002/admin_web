@@ -1,0 +1,78 @@
+﻿@using SV20T1080033.Web;
+@using SV20T1080033.Web.AppCodes;
+@model SV20T1080033.Web.Models.PaginationSearchProductInput
+@{
+    ViewBag.Title = "Quản lý Mặt hàng";
+}
+
+<div class="container-fluid box box-primary">
+    <div class="box-header">
+    </div>
+    <div class="box-body">
+        <form id="formSearchInput" action="~/Admin/Product/Search" method="get">
+            <div class="row">
+                <div class="col-sm-3">
+                    @Html.ValidationMessageFor(m => m.CategoryID,"", new {@style="color:#f00"})
+                    @Html.DropDownListFor(m => m.CategoryID, SelectListHelper.categories(), new { @class="form-control"})
+                </div>
+                <div class="col-sm-3">
+                    @Html.ValidationMessageFor(m => m.SupplierID,"", new {@style="color:#f00"})
+                    @Html.DropDownListFor(m => m.SupplierID, SelectListHelper.suppliers(), new { @class="form-control"})
+                </div>
+                <div class="col-sm-6 input-group">
+                    <input type="text" name="searchValue" value="@Model.SearchValue"
+                           class="form-control"
+                           placeholder="Nhập tên mặt hàng cần tìm">
+                    <span class="input-group-btn">
+                        <button type="submit" name="search" id="search-btn" class="btn btn-flat btn-info">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <a href="~/Admin/Product/Create"
+                           class="btn btn-flat btn-primary"
+                           style="margin-left:5px;">
+                            <i class="fa fa-plus"></i> Bổ sung
+                        </a>
+                    </span>
+                </div>
+            </div>
+        </form>
+
+        <!-- Form tìm kiếm-->
+        <div id="searchResult">
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // khi submit form search thì tìm kiếm từ trang 1
+            $("#formSearchInput").submit(function (e) {
+                e.preventDefault();
+                doSearch(1);
+                return;
+            });
+            // khi trang nạp xong thì tìm kiếm theo đang đang lưu trong Model
+            doSearch(@Model.Page)
+        });
+        function doSearch(page) {
+            var url = $("#formSearchInput").prop("action");
+            var postData = $("#formSearchInput").serializeArray();
+            postData.push({ "name": "page", "value": page });
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: postData,
+                error: function () {
+                    alert("Lỗi");
+                },
+                success: function (data) {
+                    $("#searchResult").html(data);
+                }
+            });
+            return;
+
+        }
+    </script>
+}

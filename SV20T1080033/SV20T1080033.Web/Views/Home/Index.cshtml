@@ -1,0 +1,41 @@
+﻿
+ @* @model IEnumerable<Person> chuyền dl từ model sang view , lập hợp các person có thể là list , array .. không áp đặt *@
+
+
+@model HomeIndexModel
+@{
+    ViewData["Title"] = "Home Page";
+    //string titleMessage =Convert.ToString(ViewData["TitleMessage"]);
+    //List<Person> listOfPersons = ViewData["listOfPersons"] as List<Person>;
+}
+<h1>@Model.TitleMessage</h1>
+<table class="table table-bordered">
+    <thead>
+
+        <tr class="bg-primary">
+            <th>Person Id</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.ListOfPersons)// model là dl thừ action chuyển ra 
+        {
+          <tr>
+                <td>@item?.PersonId</td>
+                <td>@item?.Name</td>
+                <td>@item?.Address</td>
+                <td>@item?.Email</td>
+
+          </tr>
+           
+          
+        
+        }
+
+    </tbody>
+
+
+</table>

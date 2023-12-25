@@ -1,0 +1,37 @@
+﻿@model SV20T1080033.DomainModels.Category;
+
+@{
+
+}
+
+<div class="box box-primary">
+
+    <div class="box-body">
+
+        <form action="~/Admin/Category/Delete/@Model.CategoryId" method="post">
+            <div class="form-group">
+                <label>Tên loại hàng:</label>
+                <p class="form-control-static" name="@nameof(Model.CategoryName)" style="border-bottom:1px dotted #000">@Model.CategoryName</p>
+            </div>
+            <div class="form-group">
+                <label>Tên giao dịch:</label>
+                <p class="form-control-static" name="@nameof(Model.Description) style="border-bottom:1px dotted #000">@Model.Description</p>
+            </div>
+            
+
+            <button type="submit" class="btn btn-danger">
+                <i class="fa fa-remove"></i>
+                Xóa dữ liệu
+            </button>
+
+            <button type="submit" class="btn btn-default">
+                <a href="~/Admin/Category">
+                    Quay lại
+                </a>
+
+            </button>
+        </form>
+
+    </div>
+</div>
+

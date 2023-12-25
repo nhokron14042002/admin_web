@@ -1,0 +1,127 @@
+﻿@model SV20T1080033.Web.Models.PaginationSearchCategory;
+@{
+    ViewBag.Title = " Danh sách loại hàng";
+}
+
+
+<div class="box box-primary">
+    <div class="box-body">
+        <form action="#" method="get">
+            <div class="input-group">
+                <input type="text" name="searchValue" class="form-control" placeholder="Nhập tên loại hàng cần tim.." spellcheck="false" data-ms-editor="true">
+                <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <a href="~/Admin/Category/Create" class="btn btn-xs btn-primary">
+                        <i class="fa fa-plus"></i> Bổ sung
+                    </a>
+                </span>
+            </div>
+        </form>
+        @* danh sach loại hàng *@
+        <p style="margin:10px 0 10px 0">
+            Có <strong> @Model.RowCount </strong>loại hàng, Hiện đang ở trang <strong>@Model.Page</strong> trên tổng số <strong>@Model.PageCount</strong>
+        </p>
+        <div class="table-responsive">
+            <table class="table table-borderd table-hover">
+                <thead class="btn-primary">
+                    <tr>
+                        <th>Tên loại hàng</th>
+                        <th>Mô tả</th>
+                        
+                        <th style="width:150px"> </th>
+                    </tr>
+
+
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Data)
+                    {
+                        <tr>
+
+                           
+                            <td>@item.CategoryName</td>
+                            <td>@item.Description</td>
+
+
+                            <td>
+                                <a href="~/admin/Category/Edit/@item.CategoryId" class="btn btn-xs btn-info">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a href="~/Admin/Category/ChangePass/123" class="btn btn-xs btn-warning">
+                                    <i class="fa fa-remove"></i>
+                                </a>
+                                <a href="~/Admin/Category/Delete/@item.CategoryId" class="btn btn-xs btn-danger">
+                                    <i class="fa fa-remove"></i>
+                                </a>
+
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+        <div class="box-footer text-center">
+            <ul class="pagination">
+                @if (Model.Page != 1)
+                {
+                    int pageNumber = Model.Page - 1;
+                    <li class="paginate_button">
+                        <a href="~/admin/Category/Index/?page=1&searchValue=@Model.SearchValue">First Page</a>
+                    </li>
+                    <li class="paginate_button" id="example2_previous">
+                        <a href="~/admin/Category/Index/?page=@pageNumber&searchValue=@Model.SearchValue">Previous</a>
+                    </li>
+                }
+                @{
+                    int _pageNext = Model.PageCount;
+                    int _pagePrev = 1;
+                    if (Model.PageCount >= 5)
+                    {
+                        _pageNext = Model.Page + 2;
+                        _pagePrev = Model.Page - 2;
+                        if (_pageNext > Model.PageCount)
+                        {
+                            _pagePrev -= _pageNext - Model.PageCount;
+                            _pageNext = Model.PageCount;
+                        }
+                        else if (_pagePrev <= 0)
+                        {
+                            _pageNext -= _pagePrev - 1;
+                            _pagePrev = 1;
+                        }
+                    }
+                    for (int i = _pagePrev; i <= _pageNext; i++)
+                    {
+                        if (Model.Page == i)
+                        {
+                            <li class="paginate_button active">
+                                <a href="#">@i</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="paginate_button">
+                                <a href="~/admin/Category/Index/?page=@i&searchValue=@Model.SearchValue">@i</a>
+                            </li>
+                        }
+                    }
+                }
+                @if (Model.Page != Model.PageCount && Model.PageCount != 1)
+                {
+                    int pageNumber = Model.Page + 1;
+                    <li class="paginate_button next" id="example2_next">
+                        <a href="~/admin/Category/Index/?page=@pageNumber&searchValue=@Model.SearchValue">Next</a>
+                    </li>
+                    <li class="paginate_button next">
+                        <a href="~/admin/Category/Index/?page=@Model.PageCount&searchValue=@Model.SearchValue">Last Page</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+

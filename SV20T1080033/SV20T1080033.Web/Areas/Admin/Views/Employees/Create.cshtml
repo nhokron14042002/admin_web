@@ -1,0 +1,113 @@
+﻿@using SV20T1080033.Web;
+@model SV20T1080033.DomainModels.Employee
+@{
+
+}
+
+<div class="box box-primary">
+	<div class="box-body">
+		@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+		{
+			<div class="alert alert-warning">
+				<p>@ViewBag.ErrorMessage</p>
+			</div>
+		}
+		<!-- /Form bổ sung -->
+		<form class="form-horizontal" action="~/Admin/Employees/Save" method="post" enctype="multipart/form-data">
+			@Html.HiddenFor(m => m.EmployeeID)
+			<div class="form-group">
+				<label class="control-label col-sm-2">Họ và tên:</label>
+				<div class="col-sm-10">
+					@Html.TextBoxFor(m => m.FullName, new { @class="form-control", @autofocus="autofocus"})
+					@Html.ValidationMessageFor(m => m.FullName, "", new {@style="color:#f00"})
+				</div>
+			</div>
+
+			@* <div class="form-group">
+			<label class="control-label col-sm-2">Ngày sinh:</label>
+			<div class="col-sm-10">
+			@Html.HiddenFor(m => m.BirthDate)
+			<input type="text"
+			name="birthday"
+			class="form-control"
+			value="@string.Format("{0:dd/MM/yyyy}",Model.BirthDate)" />
+			</div>
+			</div> *@
+
+			<div class="form-group">
+				<label class="control-label col-sm-2">Ngày sinh: </label>
+				<div class="col-sm-10">
+					@* 					@Html.HiddenFor(m => m.BirthDate)*@
+					<input type="date" class="form-control" name="@nameof(Model.BirthDate)" value="@String.Format("{0:yyyy-MM-dd}", Model.BirthDate)">
+					<input type="hidden" name="Age" value="@Calculator.AgeCalculate(Model.BirthDate)" />
+					@Html.ValidationMessageFor(m => m.BirthDate, "", new {@style="color:#f00"})
+				</div>
+			</div>
+
+
+			<div class="form-group">
+				<label class="control-label col-sm-2">Địa chỉ:</label>
+				<div class="col-sm-10">
+					@Html.TextBoxFor(m => m.Address, new { @class="form-control"})
+					@Html.ValidationMessageFor(m => m.Address, "", new {@style="color:#f00"})
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label col-sm-2">Điện thoại:</label>
+				<div class="col-sm-10">
+					@Html.TextBoxFor(m => m.Phone, new { @class="form-control"})
+					@Html.ValidationMessageFor(m => m.Phone, "", new {@style="color:#f00"})
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label col-sm-2">Email:</label>
+				<div class="col-sm-10">
+					@Html.TextBoxFor(m => m.Email, new { @class="form-control"})
+					@Html.ValidationMessageFor(m => m.Email, "", new {@style="color:#f00"})
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-lg-offset-2 col-sm-10">
+					<div class="checkbox">
+						<label>
+							@Html.CheckBoxFor(m => m.IsWorking)
+							Nhân viên đang làm việc
+						</label>
+					</div>
+				</div>
+			</div>
+
+			@* <div class="form-group">
+			<label class="control-label col-sm-2">Ảnh cả nhân:</label>
+			<input type="file" id="myFile" name="filename">
+			<img style="margin-top:20px" src="data:image/png;base64,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"
+			alt="Girl in a jacket" width="160" height="200">
+			</div> *@
+
+			<div class="form-group">
+				<label class="control-label col-sm-2">Ảnh cá nhân:</label>
+				<div class="col-sm-10">
+					@Html.HiddenFor(m => m.Photo)
+					<input type="file" class="form-control" name="uploadPhoto" accept="image/*"
+						   onchange="document.getElementById('photo').src = window.URL.createObjectURL(this.files[0])" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-lg-offset-2 col-sm-10">
+					<img id="photo" src="~/images/employees/@Model.Photo" class="img img-bordered" style="width:200px" />
+				</div>
+			</div>
+
+			<button type="submit" class="btn btn-primary">
+				<i class="fa fa-floppy-o"></i>
+				Lưu dữ liệu
+			</button>
+			<a href="~/Admin/Employee" class="btn btn-default">Quay lại</a>
+		</form>
+	</div>
+</div>
+

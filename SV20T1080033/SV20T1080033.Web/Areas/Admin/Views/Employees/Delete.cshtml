@@ -1,0 +1,48 @@
+﻿@model SV20T1080033.DomainModels.Employee
+@{
+	ViewBag.Title = "Xóa nhân viên";
+}
+
+<div class="box box-danger">
+	<div class="box-body">
+		<form action="~/Admin/Employees/Delete/@Model.EmployeeID" method="post">
+			<div class="form-group">
+				<label> Tên nhân viên:</label>
+				<p class="form-control-static" style="border-bottom:1px dotted  black">@Model.FullName</p>
+			</div>
+
+			<div class="form-group">
+				<label> Ngày sinh:</label>
+				<p class="form-control-static" style="border-bottom:1px dotted  black">@String.Format("{0:dd/MM/yyyy}", Model.BirthDate)</p>
+			</div>
+
+			<div class="form-group">
+				<label> Địa chỉ:</label>
+				<p class="form-control-static" style="border-bottom:1px dotted  black">@Model.Address</p>
+			</div>
+
+			<div class="form-group">
+				<label> Điện thoại:</label>
+				<p class="form-control-static" style="border-bottom:1px dotted  black">@Model.Phone</p>
+			</div>
+
+			<div class="form-group">
+				<label> Email:</label>
+				<p class="form-control-static" style="border-bottom:1px dotted  black">@Model.Email</p>
+			</div>
+
+			<div class="form-group">
+				<div class="col-lg-offset-2 col-sm-10">
+					<img id="photo" src="~/images/employees/@Model.Photo" class="img img-bordered" style="width:200px" />
+				</div>
+			</div>
+
+			<button type="submit" class="btn btn-danger">
+				<i class="fa fa-remove"></i>
+				Xóa dữ liệu
+			</button>
+			<a href="~/Admin/Employees" class="btn btn-default">Quay lại</a>
+		</form>
+	</div>
+</div>
+
