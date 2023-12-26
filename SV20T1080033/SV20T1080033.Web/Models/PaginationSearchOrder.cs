@@ -4,6 +4,9 @@ namespace SV20T1080033.Web.Models
 {
     public class PaginationSearchOrder : PaginationSearchBaseResult
     {
-        public IList<Customer> Data { get; set; }
+        /// <summary>
+        /// Dữ liệu đơn hàng
+        /// </summary>
+        public List<Order> Data { get; set; }
     }
 }

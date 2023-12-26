@@ -56,7 +56,9 @@ namespace SV20T1080033.Web
             }
             return list;
         }
-        public static List<SelectListItem> suppliers()
+       
+
+        public static List<SelectListItem> supplierss()
         {
             List<SelectListItem> list = new List<SelectListItem>();
             list.Add(new SelectListItem()
@@ -70,6 +72,48 @@ namespace SV20T1080033.Web
                 {
                     Value = item.SupplierID.ToString(),
                     Text = item.SupplierName
+                });
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// Lấy danh sách người giao hàng
+        /// </summary>
+        /// <returns></returns>
+        public static List<SelectListItem> Shippers()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            list.Add(new SelectListItem()
+            {
+                Value = "0",
+                Text = "--Chọn người giao hàng--"
+            });
+            foreach (var item in CommonDataService.ListOfShipperss(""))
+            {
+                list.Add(new SelectListItem()
+                {
+                    Value = item.ShipperID.ToString(),
+                    Text = item.ShipperName
+                });
+            }
+            return list;
+        }
+
+        public static List<SelectListItem> employees()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            list.Add(new SelectListItem()
+            {
+                Value = "",
+                Text = "--chọn nhân viên --"
+            });
+            foreach (var item in CommonDataService.ListOfEmployeess())
+            {
+                list.Add(new SelectListItem()
+                {
+                    Value = item.EmployeeID.ToString(),
+                    Text = item.FullName
                 });
             }
             return list;

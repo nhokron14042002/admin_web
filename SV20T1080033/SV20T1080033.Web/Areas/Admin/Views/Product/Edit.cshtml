@@ -54,7 +54,7 @@
                 <label class="control-label col-sm-2">Nhà cung cấp:</label>
                 <div class="col-sm-10">
                     <select class="form-control" name="supplierID">
-                        @foreach (var item in SelectListHelper.suppliers())
+                        @foreach (var item in SelectListHelper.supplierss())
                         {
                             if (item.Value == Model.Product.SupplierId.ToString())
                             {

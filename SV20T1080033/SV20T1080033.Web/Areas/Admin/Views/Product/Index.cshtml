@@ -17,7 +17,7 @@
                 </div>
                 <div class="col-sm-3">
                     @Html.ValidationMessageFor(m => m.SupplierID,"", new {@style="color:#f00"})
-                    @Html.DropDownListFor(m => m.SupplierID, SelectListHelper.suppliers(), new { @class="form-control"})
+                    @Html.DropDownListFor(m => m.SupplierID, SelectListHelper.supplierss(), new { @class="form-control"})
                 </div>
                 <div class="col-sm-6 input-group">
                     <input type="text" name="searchValue" value="@Model.SearchValue"
@@ -56,14 +56,15 @@
             // khi trang nạp xong thì tìm kiếm theo đang đang lưu trong Model
             doSearch(@Model.Page)
         });
+
         function doSearch(page) {
             var url = $("#formSearchInput").prop("action");
-            var postData = $("#formSearchInput").serializeArray();
-            postData.push({ "name": "page", "value": page });
+            var formData = $("#formSearchInput").serialize() + "&page=" + page;
+
             $.ajax({
                 url: url,
-                type: "POST",
-                data: postData,
+                type: "GET",
+                data: formData,
                 error: function () {
                     alert("Lỗi");
                 },
@@ -72,7 +73,6 @@
                 }
             });
             return;
-
         }
     </script>
 }
