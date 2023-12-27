@@ -118,10 +118,10 @@ namespace SV20T1080033.DataLayers.SQLServer
 
             return count;
         }*/
-		public int Count(int status = 0, string searchValue = "*")
+		public int Count(int status = 0, string searchValue = "")
 		{
 			int count = 0;
-
+			
 			if (!string.IsNullOrEmpty(searchValue))
 				searchValue = "%" + searchValue + "%";
 			using (var connection = OpenConnection())
@@ -474,7 +474,7 @@ namespace SV20T1080033.DataLayers.SQLServer
                     employeeID = data.EmployeeID,
                     acceptTime = data.AcceptTime ?? null,
                     shipperID = data.ShipperID ?? null,
-                    shipperTime = data.ShippedTime,
+                    shippedTime = data.ShippedTime,
                     finishedTime = data.FinishedTime,
                     status = data.Status
                 };
