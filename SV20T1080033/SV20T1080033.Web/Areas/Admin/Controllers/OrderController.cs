@@ -7,6 +7,7 @@ using SV20T1080033.DomainModels;
 using SV20T1080033.Web;
 using SV20T1080033.Web.AppCodes;
 using SV20T1080033.Web.Models;
+using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Reflection;
 
@@ -23,12 +24,15 @@ namespace LiteCommerce.Web.Areas.Admin.Controllers
         private const string Shopping_Cart = "Shopping_Cart";
         private const string ERROR_MESSAGE = "ErrorMessage";
         private const string Order_Search = "Order_Search";
-        public const int Page_Size = 10; // Tạo một biến hằng để đồng bộ thuộc tính cho trang web.
-        /// <summary>
-        /// Hiển thị danh sách đơn hàng
-        /// </summary>
-        /// <returns></returns>
-        public IActionResult Index()
+		private const string CUSTOMER_LIST = "Customer_List";
+		private const string EMPLOYEE_LIST = "Employee_List";
+		public const int Page_Size = 10; // Tạo một biến hằng để đồng bộ thuộc tính cho trang web.
+		/// <summary>
+		/// Hiển thị danh sách đơn hàng
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet]
+		public IActionResult Index()
         {
             var input = ApplicationContext.GetSessionData<PaginationSearchOrderInput>(Order_Search);
             if (input == null)
@@ -45,12 +49,249 @@ namespace LiteCommerce.Web.Areas.Admin.Controllers
             return View(input);
         }
 
+		/// <summary>
+		/// Giao diện trang tạo đơn hàng
+		/// </summary>
+		/// <returns></returns>
+		public IActionResult Create()
+		{
+			var input = ApplicationContext.GetSessionData<PaginationSearchInput>(Product_Search);
+			if (input == null)
+			{
+				input = new PaginationSearchInput()
+				{
+					Page = 1,
+					PageSize = Page_Size,
+					SearchValue = ""
+				};
+			}
+			return View(input);
+		}
+
+        /// <summary>
+        /// Tìm kiếm và hiển thị mặt hàng cần đưa vào giỏ hàng
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="searchValue"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult SearchProduct(PaginationSearchInput input)
+		{
+			int rowCount = 0;
+			var data = ProductDataService.ListProducts(input.Page, input.PageSize, input.SearchValue ?? "", 0, 0, 0, 0, out rowCount);
+			var model = new PaginationSearchProduct()
+			{
+				Page = input.Page,
+				PageSize = input.PageSize,
+				SearchValue = input.SearchValue ?? "",
+				RowCount = rowCount,
+				Data = data
+			};
+
+			//Lưu lại điều kiện tìm kiếm
+			ApplicationContext.SetSessionData(Product_Search, input);
+
+			return View(model);
+		}
+        [HttpPost]
+        public IActionResult SearchProducts(int page = 1, string searchValue = "")
+        {
+            var input = ApplicationContext.GetSessionData<PaginationSearchProductInput>(Product_Search);
+            if (input == null)
+            {
+                input = new PaginationSearchProductInput()
+                {
+                    Page = 1,
+                    PageSize = Page_Size,
+                    SearchValue = "",
+                    CategoryID = 0,
+                    SupplierID = 0,
+                    MinPrice = 0,
+                    MaxPrice = 0,
+                };
+            }
+            int rowCount = 0;
+            var data = ProductDataService.ListProducts(page, Page_Size, searchValue, 0, 0, 0, 0, out rowCount);
+            ViewBag.Page = page;
+            return View(data);
+        }
+
+        /// <summary>
+        /// Hiển thị giỏ hàng
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult ShowCart()
+		{
+			var model = GetCart();
+			return View(model);
+		}
+
+		/// <summary>
+		/// Lấy ds các mặt hàng trong giỏ
+		/// </summary>
+		/// <returns></returns>
+		private List<CartItem> GetCart()
+		{
+			List<CartItem> cart = ApplicationContext.GetSessionData<List<CartItem>>(Shopping_Cart);
+			if (cart == null)
+			{
+				cart = new List<CartItem>();
+				ApplicationContext.SetSessionData(Shopping_Cart, cart);
+			}
+			return cart;
+		}
+
+		public IActionResult ShowCustomerList()
+		{
+			var model = GetCustomerList();
+			return View(model);
+		}
+
+		public IActionResult ShowEmployeeList()
+		{
+			var model = GetEmployeeList();
+			return View();
+		}
+
+		private List<Customer> GetCustomerList()
+		{
+			List<Customer> customer = ApplicationContext.GetSessionData<List<Customer>>(CUSTOMER_LIST);
+			if (customer == null)
+			{
+				customer = new List<Customer>();
+				ApplicationContext.SetSessionData(CUSTOMER_LIST, customer);
+			}
+			return customer;
+		}
+
+		private List<Employee> GetEmployeeList()
+		{
+			List<Employee> employee = ApplicationContext.GetSessionData<List<Employee>>(EMPLOYEE_LIST);
+			if (employee == null)
+			{
+				employee = new List<Employee>();
+				ApplicationContext.SetSessionData(EMPLOYEE_LIST, employee);
+			}
+			return employee;
+		}
+		/// <summary>
+		/// Bổ sung thêm hàng vào giỏ hàng
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		[HttpPost]
+		public ActionResult AddToCart(CartItem data)
+		{
+			try
+			{
+				var cart = GetCart();
+				int index = cart.FindIndex(m => m.ProductId == data.ProductId);
+				if (index < 0)
+				{
+					cart.Add(data);
+				}
+				else
+				{
+					cart[index].Price = data.Price;
+					cart[index].Quantity += data.Quantity;
+				}
+				ApplicationContext.SetSessionData(Shopping_Cart, cart);
+				return Json("");
+			}
+			catch (Exception ex)
+			{
+				return Json(ex.Message);
+			}
+		}
+		/// <summary>
+		/// Xóa 1 mặt hàng khỏi giỏ hàng
+		/// </summary>        
+		/// <returns></returns>
+		public ActionResult RemoveFromCart(string id)
+		{
+			var cart = GetCart();
+			int index = cart.FindIndex(m => m.ProductId == id);
+			if (index >= 0)
+				cart.RemoveAt(index);
+			ApplicationContext.SetSessionData(Shopping_Cart, cart);
+			return Json("");
+		}
+		/// <summary>
+		/// Xóa toàn bộ dữ liệu trong giỏ hàng
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult ClearCart()
+		{
+			var cart = GetCart();
+			cart.Clear();
+			ApplicationContext.SetSessionData(Shopping_Cart, cart);
+			return Json("");
+		}
+        /// <summary>
+        /// Khởi tạo đơn hàng và chuyển đến trang Details sau khi khởi tạo xong để tiếp tục quá trình xử lý đơn hàng
+        /// </summary>        
+        /// <returns></returns>
+        /*[HttpPost]
+		public ActionResult Init()
+		{
+			int orderId = 111;
+
+			//TODO: Khởi tạo đơn hàng và nhận mã đơn hàng được khởi tạo
+
+			return RedirectToAction("Details", new { id = orderId });
+		}
+*/
+        /// <summary>
+        /// Khởi tạo đơn hàng và chuyển đến trang Details sau khi khởi tạo xong để tiếp tục quá trình xử lý đơn hàng
+        /// </summary>        
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Init(int customerID = 0, int employeeID = 0)
+        {
+            List<CartItem> shoppingCart = GetCart();
+            if (shoppingCart == null || shoppingCart.Count == 0)
+            {
+                TempData[ERROR_MESSAGE] = "Không thể tạo đơn hàng với giỏ hàng trống";
+                return RedirectToAction("Create");
+            }
+
+            if (customerID == 0 || employeeID == 0)
+            {
+                TempData[ERROR_MESSAGE] = "Vui lòng chọn khách hàng và nhân viên phụ trách";
+                return RedirectToAction("Create");
+            }
+			// Chuyển đổi từ List<CartItem> sang List<OrderDetail>
+			List<OrderDetail> orderDetails = new List<OrderDetail>();
+			foreach (CartItem cartItem in shoppingCart)
+			{
+				OrderDetail orderDetail = new OrderDetail
+				{
+					// Thiết lập các thuộc tính của OrderDetail từ CartItem
+					ProductID = Convert.ToInt32(cartItem.ProductId),
+					ProductName = cartItem.ProductName,
+					Unit = cartItem.Unit,
+					Quantity = cartItem.Quantity,
+					SalePrice = cartItem.Price
+                      
+
+					// Các thuộc tính khác của OrderDetail mà bạn có thể cần thiết lập
+				};
+
+				orderDetails.Add(orderDetail);
+			}
+
+			int orderID = OrderDataService.InitOrder(customerID, employeeID, DateTime.Now, orderDetails);
+
+            HttpContext.Session.Remove("Shopping_Cart");
+            return RedirectToAction("Details", new { id = orderID });
+        }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public ActionResult Search(PaginationSearchOrderInput input)
+        [HttpPost]
+		public ActionResult Search(PaginationSearchOrderInput input)
         {
             int rowCount = 0;
             var data = OrderDataService.ListOrders(input.Page, input.PageSize, input.Status, input.SearchValue, out rowCount);
@@ -71,17 +312,143 @@ namespace LiteCommerce.Web.Areas.Admin.Controllers
         /// Giao diện trang tạo đơn hàng
         /// </summary>
         /// <returns></returns>
-        public IActionResult Create()
+        /*public IActionResult Create()
         {
             ViewBag.ErrorMessage = TempData[ERROR_MESSAGE] ?? "";
             return View(GetShoppingCart());
-        }
-        /// <summary>
-        /// Giao diện trang chi tiết đơn hàng
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public IActionResult Details(int id = 0)
+        }*/
+
+		/// <summary>
+		/// Sử dụng 1 biến session để lưu tạm giỏ hàng (danh sách các chi tiết của đơn hàng) trong quá trình xử lý.
+		/// Hàm này lấy giỏ hàng hiện đang có trong session (nếu chưa có thì tạo mới giỏ hàng rỗng)
+		/// </summary>
+		/// <returns></returns>
+		/*private List<OrderDetail> GetShoppingCart()
+		{
+			List<OrderDetail> shoppingCart = ApplicationContext.GetSessionData<List<OrderDetail>>(Shopping_Cart);
+			if (shoppingCart == null)
+			{
+				shoppingCart = new List<OrderDetail>();
+				ApplicationContext.SetSessionData(Shopping_Cart, shoppingCart);
+			}
+			return shoppingCart;
+		}*/
+
+		/// <summary>
+		/// Lấy danh sách mặt hàng để hiển thị ở trang tạo đơn hàng
+		/// </summary>        
+		/// <returns></returns>
+		/*[HttpPost]
+		public IActionResult SearchProducts(int page = 1, string searchValue = "")
+		{
+			var input = ApplicationContext.GetSessionData<PaginationSearchProductInput>(Product_Search);
+			if (input == null)
+			{
+				input = new PaginationSearchProductInput()
+				{
+					Page = 1,
+					PageSize = Page_Size,
+					SearchValue = "",
+					CategoryID = 0,
+					SupplierID = 0,
+					MinPrice = 0,
+					MaxPrice = 0,
+				};
+			}
+			int rowCount = 0;
+			var data = ProductDataService.ListProducts(page, Page_Size, searchValue, 0, 0, 0, 0, out rowCount);
+			ViewBag.Page = page;
+			return View(data);
+		}*/
+		/// <summary>
+		/// Bổ sung thêm hàng vào giỏ hàng
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		/*[HttpPost]
+		public ActionResult AddToCart(OrderDetail data)
+		{
+			if (data == null)
+			{
+				TempData[ERROR_MESSAGE] = "Dữ liệu không hợp lệ";
+				return RedirectToAction("Create");
+			}
+			if (data.SalePrice <= 0 || data.Quantity <= 0)
+			{
+				TempData[ERROR_MESSAGE] = "Giá bán và số lượng không hợp lệ";
+				return RedirectToAction("Create");
+			}
+
+			List<OrderDetail> shoppingCart = GetShoppingCart();
+			var existsProduct = shoppingCart.FirstOrDefault(m => m.ProductID == data.ProductID);
+
+			if (existsProduct == null) //Nếu mặt hàng cần được bổ sung chưa có trong giỏ hàng thì bổ sung vào giỏ
+			{
+				shoppingCart.Add(data);
+			}
+			else //Trường hợp mặt hàng cần bổ sung đã có thì tăng số lượng và thay đổi đơn giá
+			{
+				existsProduct.Quantity += data.Quantity;
+				existsProduct.SalePrice = data.SalePrice;
+			}
+			ApplicationContext.SetSessionData(Shopping_Cart, shoppingCart);
+			return RedirectToAction("Create");
+		}*/
+		/// <summary>
+		/// Xóa 1 mặt hàng khỏi giỏ hàng
+		/// </summary>        
+		/// <returns></returns>
+		/*public ActionResult RemoveFromCart(int id = 0)
+		{
+			List<OrderDetail> shoppingCart = GetShoppingCart();
+			int index = shoppingCart.FindIndex(m => m.ProductID == id);
+			if (index >= 0)
+				shoppingCart.RemoveAt(index);
+			ApplicationContext.SetSessionData(Shopping_Cart, shoppingCart);
+			return RedirectToAction("Create");
+		}*/
+		/// <summary>
+		/// Xóa toàn bộ dữ liệu trong giỏ hàng
+		/// </summary>
+		/// <returns></returns>
+		/*public ActionResult ClearCart()
+		{
+			List<OrderDetail> shoppingCart = GetShoppingCart();
+			shoppingCart.Clear();
+			ApplicationContext.SetSessionData(Shopping_Cart, shoppingCart);
+			return RedirectToAction("Create");
+		}*/
+		/// <summary>
+		/// Khởi tạo đơn hàng và chuyển đến trang Details sau khi khởi tạo xong để tiếp tục quá trình xử lý đơn hàng
+		/// </summary>        
+		/// <returns></returns>
+		/*[HttpPost]
+		public ActionResult Init(int customerID = 0, int employeeID = 0)
+		{
+			List<OrderDetail> shoppingCart = GetShoppingCart();
+			if (shoppingCart == null || shoppingCart.Count == 0)
+			{
+				TempData[ERROR_MESSAGE] = "Không thể tạo đơn hàng với giỏ hàng trống";
+				return RedirectToAction("Create");
+			}
+
+			if (customerID == 0 || employeeID == 0)
+			{
+				TempData[ERROR_MESSAGE] = "Vui lòng chọn khách hàng và nhân viên phụ trách";
+				return RedirectToAction("Create");
+			}
+
+			int orderID = OrderDataService.InitOrder(customerID, employeeID, DateTime.Now, shoppingCart);
+
+			HttpContext.Session.Remove("Shopping_Cart");
+			return RedirectToAction("Details", new { id = orderID });
+		}*/
+		/// <summary>
+		/// Giao diện trang chi tiết đơn hàng
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public IActionResult Details(int id = 0)
         {
             //Code chức năng lấy và hiển thị thông tin của đơn hàng và chi tiết của đơn hàng
             if (id < 0)
@@ -375,130 +742,6 @@ namespace LiteCommerce.Web.Areas.Admin.Controllers
             return RedirectToAction("Details", new { id = id });
         }
 
-        /// <summary>
-        /// Sử dụng 1 biến session để lưu tạm giỏ hàng (danh sách các chi tiết của đơn hàng) trong quá trình xử lý.
-        /// Hàm này lấy giỏ hàng hiện đang có trong session (nếu chưa có thì tạo mới giỏ hàng rỗng)
-        /// </summary>
-        /// <returns></returns>
-        private List<OrderDetail> GetShoppingCart()
-        {
-            List<OrderDetail> shoppingCart = ApplicationContext.GetSessionData<List<OrderDetail>>(Shopping_Cart) ;
-            if (shoppingCart == null)
-            {
-                shoppingCart = new List<OrderDetail>();
-                ApplicationContext.SetSessionData(Shopping_Cart, shoppingCart);
-            }
-            return shoppingCart;
-        }
-
-        /// <summary>
-        /// Lấy danh sách mặt hàng để hiển thị ở trang tạo đơn hàng
-        /// </summary>        
-        /// <returns></returns>
-        [HttpPost]
-        public IActionResult SearchProducts(int page = 1, string searchValue = "")
-        {
-            var input = ApplicationContext.GetSessionData<PaginationSearchProductInput>(Product_Search);
-            if (input == null)
-            {
-                input = new PaginationSearchProductInput()
-                {
-                    Page = 1,
-                    PageSize = Page_Size,
-                    SearchValue = "",
-                    CategoryID = 0,
-                    SupplierID = 0,
-                    MinPrice = 0,
-                    MaxPrice = 0,
-                };
-            }
-            int rowCount = 0;
-            var data = ProductDataService.ListProducts(page, Page_Size, searchValue, 0, 0, 0, 0, out rowCount);
-            ViewBag.Page = page;
-            return View(data);
-        }
-        /// <summary>
-        /// Bổ sung thêm hàng vào giỏ hàng
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult AddToCart(OrderDetail data)
-        {
-            if (data == null)
-            {
-                TempData[ERROR_MESSAGE] = "Dữ liệu không hợp lệ";
-                return RedirectToAction("Create");
-            }
-            if (data.SalePrice <= 0 || data.Quantity <= 0)
-            {
-                TempData[ERROR_MESSAGE] = "Giá bán và số lượng không hợp lệ";
-                return RedirectToAction("Create");
-            }
-
-            List<OrderDetail> shoppingCart = GetShoppingCart();
-            var existsProduct = shoppingCart.FirstOrDefault(m => m.ProductID == data.ProductID);
-
-            if (existsProduct == null) //Nếu mặt hàng cần được bổ sung chưa có trong giỏ hàng thì bổ sung vào giỏ
-            {
-                shoppingCart.Add(data);
-            }
-            else //Trường hợp mặt hàng cần bổ sung đã có thì tăng số lượng và thay đổi đơn giá
-            {
-                existsProduct.Quantity += data.Quantity;
-                existsProduct.SalePrice = data.SalePrice;
-            }
-            ApplicationContext.SetSessionData(Shopping_Cart, shoppingCart);
-            return RedirectToAction("Create");
-        }
-        /// <summary>
-        /// Xóa 1 mặt hàng khỏi giỏ hàng
-        /// </summary>        
-        /// <returns></returns>
-        public ActionResult RemoveFromCart(int id = 0)
-        {
-            List<OrderDetail> shoppingCart = GetShoppingCart();
-            int index = shoppingCart.FindIndex(m => m.ProductID == id);
-            if (index >= 0)
-                shoppingCart.RemoveAt(index);
-            ApplicationContext.SetSessionData(Shopping_Cart, shoppingCart);
-            return RedirectToAction("Create");
-        }
-        /// <summary>
-        /// Xóa toàn bộ dữ liệu trong giỏ hàng
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult ClearCart()
-        {
-            List<OrderDetail> shoppingCart = GetShoppingCart();
-            shoppingCart.Clear();
-            ApplicationContext.SetSessionData(Shopping_Cart, shoppingCart);
-            return RedirectToAction("Create");
-        }
-        /// <summary>
-        /// Khởi tạo đơn hàng và chuyển đến trang Details sau khi khởi tạo xong để tiếp tục quá trình xử lý đơn hàng
-        /// </summary>        
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult Init(int customerID = 0, int employeeID = 0)
-        {
-            List<OrderDetail> shoppingCart = GetShoppingCart();
-            if (shoppingCart == null || shoppingCart.Count == 0)
-            {
-                TempData[ERROR_MESSAGE] = "Không thể tạo đơn hàng với giỏ hàng trống";
-                return RedirectToAction("Create");
-            }
-
-            if (customerID == 0 || employeeID == 0)
-            {
-                TempData[ERROR_MESSAGE] = "Vui lòng chọn khách hàng và nhân viên phụ trách";
-                return RedirectToAction("Create");
-            }
-
-            int orderID = OrderDataService.InitOrder(customerID, employeeID, DateTime.Now, shoppingCart);
-
-            HttpContext.Session.Remove("Shopping_Cart");
-            return RedirectToAction("Details", new {id = orderID});
-        }
+       
     }
 }

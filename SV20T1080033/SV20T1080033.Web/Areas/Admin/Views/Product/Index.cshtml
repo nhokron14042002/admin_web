@@ -56,15 +56,14 @@
             // khi trang nạp xong thì tìm kiếm theo đang đang lưu trong Model
             doSearch(@Model.Page)
         });
-
         function doSearch(page) {
             var url = $("#formSearchInput").prop("action");
-            var formData = $("#formSearchInput").serialize() + "&page=" + page;
-
+            var postData = $("#formSearchInput").serializeArray();
+            postData.push({ "name": "page", "value": page });
             $.ajax({
                 url: url,
-                type: "GET",
-                data: formData,
+                type: "POST",
+                data: postData,
                 error: function () {
                     alert("Lỗi");
                 },
@@ -73,6 +72,8 @@
                 }
             });
             return;
+
         }
     </script>
+}
 }

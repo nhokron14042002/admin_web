@@ -118,5 +118,24 @@ namespace SV20T1080033.Web
             }
             return list;
         }
-    }
+
+		public static List<SelectListItem> customers()
+		{
+			List<SelectListItem> list = new List<SelectListItem>();
+			list.Add(new SelectListItem()
+			{
+				Value = "",
+				Text = "--Khách hàng --"
+			});
+			foreach (var item in CommonDataService.ListOfCustomerss())
+			{
+				list.Add(new SelectListItem()
+				{
+					Value = item.CustomerID.ToString(),
+					Text = item.CustomerName
+				});
+			}
+			return list;
+		}
+	}
 }

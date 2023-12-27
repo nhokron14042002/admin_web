@@ -8,5 +8,9 @@
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;
         public string SearchValue { get; set; } = "";
-    }
+
+		public int customerID { get; set; }
+		public int shipperID { get; set; }
+		public int employeeID { get; set; }
+	}
 }

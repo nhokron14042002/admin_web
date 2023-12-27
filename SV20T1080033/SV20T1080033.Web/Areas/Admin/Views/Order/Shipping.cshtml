@@ -1,23 +1,24 @@
-﻿@{
+﻿@using SV20T1080033.Web;
+@using SV20T1080033.Web.AppCodes;
+@model SV20T1080033.Web.Models.PaginationSearchOrderDetail
+@{
     Layout = null;
 }
 
 <div class="modal-dialog">
     <div class="modal-content">
-        <form action="~/Admin/Order/Shipping/111" method="post">
+        <form action="~/Order/Shipping" method="post">
             <div class="modal-header bg-primary">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Chuyển giao hàng cho đơn hàng</h4>
+                <h4 class="modal-title">Cập nhật chi tiết đơn hàng</h4>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                     <label class="control-label">Người giao hàng:</label>
-                    <select class="form-control" name="shipperID">
-                        <option value="0">-- Chọn người giao hàng ---</option>
-                        <option value="1">Giao hàng Tiết kiệm</option>
-                        <option value="2">Tín Thành</option>
-                        <option value="3">Viettel Express</option>
-                    </select>
+                    <div class="col-sm-10">
+                        @Html.ValidationMessageFor(m => m.shipperID )
+                        @Html.DropDownListFor(m => m.shipperID, SelectListHelper.Shippers(), new { @class="form-control"})
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -31,3 +32,4 @@
         </form>
     </div>
 </div>
+

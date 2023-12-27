@@ -84,12 +84,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcT3JkZXJcU2VhcmNoLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[G:/.NET/SV20T1080033/SV20T1080033.Web/Areas/Admin/Views/Order/SearchProducts.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcT3JkZXJcU2VhcmNoUHJvZHVjdHMuY3NodG1s
+[G:/.NET/SV20T1080033/SV20T1080033.Web/Areas/Admin/Views/Order/SearchProduct.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcT3JkZXJcU2VhcmNoUHJvZHVjdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [G:/.NET/SV20T1080033/SV20T1080033.Web/Areas/Admin/Views/Order/Shipping.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcT3JkZXJcU2hpcHBpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/.NET/SV20T1080033/SV20T1080033.Web/Areas/Admin/Views/Order/ShowCart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcT3JkZXJcU2hvd0NhcnQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [G:/.NET/SV20T1080033/SV20T1080033.Web/Areas/Admin/Views/Product/Attribute.cshtml]
